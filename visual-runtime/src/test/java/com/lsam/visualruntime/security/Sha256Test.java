@@ -9,6 +9,10 @@ public class Sha256Test {
     public void testHexOfBytes() throws Exception {
         byte[] data = "hello".getBytes();
         String sha = Sha256.hexOfBytes(data);
-        assertEquals("2cf24dba5fb0a030e...", sha.substring(0, 20)); // prefix match
+
+        // SHA-256("hello") =
+        // 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+        assertEquals(64, sha.length());
+        assertTrue(sha.startsWith("2cf24dba5fb0a30e26e83b2ac5b9e29e"));
     }
 }

@@ -1,0 +1,3 @@
+02-22 07:40:55.797  9502  9516 I TestRunner: started: testParseBasic(com.lsam.visualruntime.compose.ManifestParserAndroidTest)
+02-22 07:40:55.797  1187  2347 D C2MtkBufferManager: over 5000ms not request from VCodec but callback hooked, slow BM Cc fetch thread
+02-22 07:40:55.799  9502  9516 I TestRunner: finished: testParseBasic(com.lsam.visualruntime.compose.ManifestParserAndroidTest)

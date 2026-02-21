@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
 }
 
 android {
@@ -10,6 +10,7 @@ android {
         minSdk = 28
         targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     compileOptions {
@@ -18,20 +19,20 @@ android {
     }
 }
 
+dependencies {
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.core)
+
+    testImplementation(libs.junit4)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+
+    androidTestImplementation(libs.okhttp)
+    androidTestImplementation(libs.mockwebserver)
+}
+
 tasks.register("ciCheck") {
     dependsOn("testDebugUnitTest")
     dependsOn("connectedDebugAndroidTest")
-}
-
-dependencies {
-    implementation("androidx.annotation:annotation:1.9.1")
-    implementation("androidx.core:core:1.16.0")
-
-    testImplementation("junit:junit:4.13.2")
-
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-    androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

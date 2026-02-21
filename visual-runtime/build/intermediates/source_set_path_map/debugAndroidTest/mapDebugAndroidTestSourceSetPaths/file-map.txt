@@ -1,0 +1,14 @@
+com.lsam.visualruntime.test.visual-runtime-lifecycle-runtime-2.6.2-0 C:\Users\user\.gradle\caches\8.11.1\transforms\21bf5122ca995a62f960148170ae5bd7\transformed\lifecycle-runtime-2.6.2\res
+com.lsam.visualruntime.test.visual-runtime-core-runtime-2.2.0-1 C:\Users\user\.gradle\caches\8.11.1\transforms\2fa1b567df717b3fa1b764193f72293b\transformed\core-runtime-2.2.0\res
+com.lsam.visualruntime.test.visual-runtime-jetified-annotation-experimental-1.4.1-2 C:\Users\user\.gradle\caches\8.11.1\transforms\809f55a86bd9c4165b9732377a865927\transformed\jetified-annotation-experimental-1.4.1\res
+com.lsam.visualruntime.test.visual-runtime-jetified-core-1.5.0-3 C:\Users\user\.gradle\caches\8.11.1\transforms\a4c6e0a143439cf834a4d8a6974945be\transformed\jetified-core-1.5.0\res
+com.lsam.visualruntime.test.visual-runtime-core-1.16.0-4 C:\Users\user\.gradle\caches\8.11.1\transforms\a64b4f1e16a75415912571d9a2459a0d\transformed\core-1.16.0\res
+com.lsam.visualruntime.test.visual-runtime-jetified-startup-runtime-1.1.1-5 C:\Users\user\.gradle\caches\8.11.1\transforms\a9bc444a77c521daa26c917cfc1da7dc\transformed\jetified-startup-runtime-1.1.1\res
+com.lsam.visualruntime.test.visual-runtime-jetified-profileinstaller-1.3.0-6 C:\Users\user\.gradle\caches\8.11.1\transforms\af0d9bb89505077af6431b1438c93e5e\transformed\jetified-profileinstaller-1.3.0\res
+com.lsam.visualruntime.test.visual-runtime-jetified-core-viewtree-1.0.0-7 C:\Users\user\.gradle\caches\8.11.1\transforms\d1fc98a0f34720bced474611949db4f2\transformed\jetified-core-viewtree-1.0.0\res
+com.lsam.visualruntime.test.visual-runtime-jetified-tracing-1.2.0-8 C:\Users\user\.gradle\caches\8.11.1\transforms\d48c1ba17b1a8c4a1214e0829645c2a9\transformed\jetified-tracing-1.2.0\res
+com.lsam.visualruntime.test.visual-runtime-androidTest-9 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\generated\res\resValues\androidTest\debug
+com.lsam.visualruntime.test.visual-runtime-mergeDebugAndroidTestResources-10 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.lsam.visualruntime.test.visual-runtime-mergeDebugAndroidTestResources-11 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.lsam.visualruntime.test.visual-runtime-debugAndroidTest-12 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+com.lsam.visualruntime.test.visual-runtime-debug-13 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\packaged_res\debug\packageDebugResources

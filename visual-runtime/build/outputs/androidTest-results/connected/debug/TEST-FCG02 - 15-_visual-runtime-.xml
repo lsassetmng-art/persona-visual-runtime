@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="com.lsam.visualruntime.cache.DiskCacheCleanerTest" tests="7" failures="0" errors="0" skipped="0" time="1.18" timestamp="2026-02-21T22:40:56" hostname="localhost">
+  <properties>
+    <property name="device" value="FCG02 - 15" />
+    <property name="flavor" value="" />
+    <property name="project" value=":visual-runtime" />
+  </properties>
+  <testcase name="testLruClean" classname="com.lsam.visualruntime.cache.DiskCacheCleanerTest" time="0.054" />
+  <testcase name="testParallelSameKeyDoesNotCrash" classname="com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest" time="0.013" />
+  <testcase name="testETag304CacheHit_Simulated" classname="com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest" time="0.013" />
+  <testcase name="testBlendModesDoNotCrash" classname="com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest" time="0.011" />
+  <testcase name="testFallbackOnBrokenImage" classname="com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest" time="0.014" />
+  <testcase name="testParseBasic" classname="com.lsam.visualruntime.compose.ManifestParserAndroidTest" time="0.009" />
+  <testcase name="testComposeSingleLayer" classname="com.lsam.visualruntime.render.BitmapComposerTest" time="0.009" />
+</testsuite>

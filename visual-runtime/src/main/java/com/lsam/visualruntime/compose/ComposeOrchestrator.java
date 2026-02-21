@@ -19,6 +19,7 @@ import java.util.List;
 public class ComposeOrchestrator {
 
     public static class Config {
+        public LayerDownloader customDownloader = null;
         public StrictModeGuard strictModeGuard = StrictModeGuard.strict();
         public MetricsSink metricsSink = null;
         public boolean enableCache = true;
@@ -44,7 +45,9 @@ public class ComposeOrchestrator {
         this.lockRegistry = new ComposeLockRegistry();
         this.parser = new ManifestParser();
         this.sorter = new LayerSorter();
-        this.downloader = new LayerDownloader(new LayerDownloader.Config());
+        this.downloader = (config != null && config.customDownloader != null)
+            ? config.customDownloader
+            : new LayerDownloader(new LayerDownloader.Config());
         this.composer = new BitmapComposer();
     }
 
@@ -86,7 +89,7 @@ public class ComposeOrchestrator {
                     try {
                         ImageFormatDetector.requireSupported(lf);
                     } catch (Exception e) {
-                        // 再DL1回
+                        // 蜀好L1蝗・
                         downloader.downloadToFile(spec.getUrl(), lf);
                         ImageFormatDetector.requireSupported(lf);
                     }

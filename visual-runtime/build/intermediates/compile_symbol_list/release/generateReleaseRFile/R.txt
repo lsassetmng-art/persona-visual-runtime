@@ -1,0 +1,1 @@
+int drawable persona_fallback 0x0
