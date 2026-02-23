@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.okhttp)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.core)
 

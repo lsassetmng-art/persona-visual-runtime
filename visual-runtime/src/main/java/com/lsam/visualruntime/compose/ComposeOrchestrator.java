@@ -2,146 +2,90 @@ package com.lsam.visualruntime.compose;
 
 import android.content.Context;
 
-import com.lsam.visualruntime.cache.*;
 import com.lsam.visualruntime.download.LayerDownloader;
-import com.lsam.visualruntime.error.*;
-import com.lsam.visualruntime.log.Logger;
-import com.lsam.visualruntime.model.*;
-import com.lsam.visualruntime.render.*;
-import com.lsam.visualruntime.security.*;
-import com.lsam.visualruntime.trace.*;
+import com.lsam.visualruntime.model.ComposeManifest;
+import com.lsam.visualruntime.model.LayerSpec;
+import com.lsam.visualruntime.render.BitmapComposer;
 import com.lsam.visualruntime.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ComposeOrchestrator {
 
-    public static class Config {
-        public LayerDownloader customDownloader = null;
-        public StrictModeGuard strictModeGuard = StrictModeGuard.strict();
-        public MetricsSink metricsSink = null;
-        public boolean enableCache = true;
-        public boolean enableFallback = true;
-        public int fallbackWidth = 512;
-        public int fallbackHeight = 512;
-        public long maxCacheBytes = 200L * 1024L * 1024L; // 200MB
-    }
-
-    private final Config config;
-    private final DiskCacheManager cache;
-    private final DiskCacheCleaner cleaner;
-    private final ComposeLockRegistry lockRegistry;
-    private final ManifestParser parser;
-    private final LayerSorter sorter;
-    private final LayerDownloader downloader;
-    private final BitmapComposer composer;
-
-    public ComposeOrchestrator(Config config) {
-        this.config = (config == null) ? new Config() : config;
-        this.cache = new DiskCacheManager();
-        this.cleaner = new DiskCacheCleaner(this.config.maxCacheBytes);
-        this.lockRegistry = new ComposeLockRegistry();
-        this.parser = new ManifestParser();
-        this.sorter = new LayerSorter();
-        this.downloader = (config != null && config.customDownloader != null)
-            ? config.customDownloader
-            : new LayerDownloader(new LayerDownloader.Config());
-        this.composer = new BitmapComposer();
-    }
-
-    public Result composeBlocking(Context context, ComposeRequest request) throws Exception {
-
-        long t0 = Trace.now();
-        if (config.strictModeGuard != null) config.strictModeGuard.check();
-
-        ComposeManifest manifest = parser.parse(request.getLayersJson());
-        List<LayerSpec> layers = new ArrayList<>(manifest.getLayers());
-        sorter.sortByZIndex(layers);
-
-        int w = request.getOutputWidth() > 0 ? request.getOutputWidth() : manifest.getWidth();
-        int h = request.getOutputHeight() > 0 ? request.getOutputHeight() : manifest.getHeight();
-
-        CacheKey key = new CacheKey(request.getPersonaId(), manifest.getManifestSha256(), w, h);
-        String lockKey = request.getPersonaId() + ":" + key.fileNamePng();
-
-        Object lock = lockRegistry.acquire(lockKey);
-
-        synchronized (lock) {
-            try {
-                File outPng = cache.getOutputPngFile(context, key);
-                cache.ensureParent(outPng);
-
-                if (config.enableCache && outPng.exists() && PngValidator.isValidPng(outPng)) {
-                    String sha = Sha256.hexOfFile(outPng);
-                    return new Result(outPng, sha, true, false, Trace.elapsed(t0));
-                }
-
-                List<File> layerFiles = new ArrayList<>();
-
-                for (int i = 0; i < layers.size(); i++) {
-                    LayerSpec spec = layers.get(i);
-                    File lf = cache.getLayerFile(context, key, i);
-
-                    downloader.downloadToFile(spec.getUrl(), lf);
-
-                    try {
-                        ImageFormatDetector.requireSupported(lf);
-                    } catch (Exception e) {
-                        // 蜀好L1蝗・
-                        downloader.downloadToFile(spec.getUrl(), lf);
-                        ImageFormatDetector.requireSupported(lf);
-                    }
-
-                    layerFiles.add(lf);
-                }
-
-                android.graphics.Bitmap bmp = composer.composeToBitmap(
-                        manifest,
-                        layerFiles
-                );
-
-                File tmp = new File(outPng.getAbsolutePath() + ".tmp");
-                PngWriter.writePng(bmp, tmp);
-
-                if (bmp != null && !bmp.isRecycled()) bmp.recycle();
-
-                FileUtils.safeReplace(tmp, outPng);
-
-                if (!PngValidator.isValidPng(outPng)) {
-                    throw new DecodeError("output png invalid");
-                }
-
-                String sha = Sha256.hexOfFile(outPng);
-
-                ComposeMetaWriter.writeMeta(outPng, sha, layers.size(), Trace.elapsed(t0));
-
-                // cache clean
-                cleaner.clean(outPng.getParentFile());
-
-                return new Result(outPng, sha, false, false, Trace.elapsed(t0));
-
-            } finally {
-                lockRegistry.release(lockKey, lock);
-                lock.notifyAll();
-            }
-        }
-    }
-
     public static class Result {
         public final File outputFile;
-        public final String sha256;
         public final boolean fromCache;
-        public final boolean fromFallback;
-        public final long elapsedMsTotal;
 
-        public Result(File outputFile, String sha256, boolean fromCache, boolean fromFallback, long elapsedMsTotal) {
+        public Result(File outputFile, boolean fromCache) {
             this.outputFile = outputFile;
-            this.sha256 = sha256;
             this.fromCache = fromCache;
-            this.fromFallback = fromFallback;
-            this.elapsedMsTotal = elapsedMsTotal;
         }
+    }
+
+    private final ManifestParser parser = new ManifestParser();
+    private final LayerDownloader downloader = new LayerDownloader();
+    private final BitmapComposer composer = new BitmapComposer();
+
+    public Result composeBlocking(Context context, String personaId, String layersJson) throws Exception {
+
+        if (context == null) throw new IllegalArgumentException("context null");
+        if (personaId == null || personaId.trim().isEmpty()) throw new IllegalArgumentException("personaId empty");
+
+        ComposeManifest manifest = parser.parse(layersJson);
+
+        List<LayerSpec> layers = new ArrayList<>(manifest.getLayers());
+        Collections.sort(layers, new Comparator<LayerSpec>() {
+            @Override public int compare(LayerSpec a, LayerSpec b) {
+                return a.getZIndex() - b.getZIndex();
+            }
+        });
+
+        int w = manifest.getWidth();
+        int h = manifest.getHeight();
+
+        String sha = manifest.getManifestSha256();
+        if (sha == null || sha.isEmpty()) sha = "nohash";
+
+        File outPng = getOutputFile(context, personaId, sha, w, h);
+
+        if (outPng.exists() && outPng.length() > 0) {
+            return new Result(outPng, true);
+        }
+
+        // download layers
+        List<File> files = new ArrayList<>(layers.size());
+        File dir = outPng.getParentFile();
+        if (dir != null) dir.mkdirs();
+
+        for (int i = 0; i < layers.size(); i++) {
+            LayerSpec spec = layers.get(i);
+
+            File lf = new File(dir, "layer_" + i + ".bin");
+            downloader.downloadToFile(spec.getBucketName(), spec.getAssetPath(), lf);
+            files.add(lf);
+        }
+
+        // compose
+        ComposeManifest sorted = new ComposeManifest(sha, w, h, layers);
+        android.graphics.Bitmap bmp = composer.composeToBitmap(sorted, files);
+
+        File tmp = new File(outPng.getAbsolutePath() + ".tmp");
+        FileUtils.writePng(bmp, tmp);
+        if (bmp != null && !bmp.isRecycled()) bmp.recycle();
+
+        FileUtils.safeReplace(tmp, outPng);
+
+        return new Result(outPng, false);
+    }
+
+    private File getOutputFile(Context context, String personaId, String sha, int w, int h) {
+        File base = new File(context.getCacheDir(), "visualruntime");
+        File pdir = new File(base, personaId);
+        String name = sha + "_" + w + "x" + h + ".png";
+        return new File(pdir, name);
     }
 }

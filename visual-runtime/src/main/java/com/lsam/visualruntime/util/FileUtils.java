@@ -1,37 +1,44 @@
 package com.lsam.visualruntime.util;
 
+import android.graphics.Bitmap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-public final class FileUtils {
+public class FileUtils {
 
-    private FileUtils() {}
+    public static void safeReplace(File tmp, File dst) throws Exception {
+        if (tmp == null || dst == null) throw new IllegalArgumentException("tmp/dst null");
+        File parent = dst.getParentFile();
+        if (parent != null) parent.mkdirs();
 
-    public static void safeReplace(File tmp, File target) throws Exception {
-
-        if (target.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            target.delete();
+        if (dst.exists() && !dst.delete()) {
+            throw new IllegalStateException("failed to delete dst: " + dst.getAbsolutePath());
         }
-
-        if (tmp.renameTo(target)) {
-            return;
+        if (!tmp.renameTo(dst)) {
+            // fallback copy
+            copy(tmp, dst);
+            tmp.delete();
         }
+    }
 
-        // fallback copy
-        try (FileInputStream in = new FileInputStream(tmp);
-             FileOutputStream out = new FileOutputStream(target)) {
-
+    public static void copy(File src, File dst) throws Exception {
+        try (FileInputStream fis = new FileInputStream(src);
+             FileOutputStream fos = new FileOutputStream(dst)) {
             byte[] buf = new byte[64 * 1024];
             int r;
-            while ((r = in.read(buf)) != -1) {
-                out.write(buf, 0, r);
-            }
-            out.flush();
+            while ((r = fis.read(buf)) > 0) fos.write(buf, 0, r);
         }
+    }
 
-        //noinspection ResultOfMethodCallIgnored
-        tmp.delete();
+    public static void writePng(Bitmap bmp, File out) throws Exception {
+        File parent = out.getParentFile();
+        if (parent != null) parent.mkdirs();
+        try (FileOutputStream fos = new FileOutputStream(out)) {
+            if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, fos)) {
+                throw new IllegalStateException("png compress failed");
+            }
+        }
     }
 }

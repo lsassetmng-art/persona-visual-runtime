@@ -5,10 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 
-import com.lsam.visualruntime.error.DecodeError;
 import com.lsam.visualruntime.model.ComposeManifest;
 import com.lsam.visualruntime.model.LayerSpec;
 
@@ -17,66 +14,73 @@ import java.util.List;
 
 public class BitmapComposer {
 
+    private static final int MAX_PIXELS = 4096 * 4096;
+
     public Bitmap composeToBitmap(ComposeManifest manifest, List<File> layerFiles) throws Exception {
+
+        if (manifest == null) throw new IllegalArgumentException("manifest null");
+        if (layerFiles == null) throw new IllegalArgumentException("layerFiles null");
 
         int w = manifest.getWidth();
         int h = manifest.getHeight();
+
+        long px = (long) w * (long) h;
+        if (px <= 0 || px > MAX_PIXELS) throw new IllegalArgumentException("output too large");
+
+        List<LayerSpec> layers = manifest.getLayers();
+        if (layers == null || layers.isEmpty()) throw new IllegalArgumentException("layers empty");
+        if (layers.size() != layerFiles.size()) throw new IllegalArgumentException("layers/files mismatch");
 
         Bitmap out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(out);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-
-        List<LayerSpec> layers = manifest.getLayers();
+        paint.setDither(true);
 
         for (int i = 0; i < layers.size(); i++) {
 
             LayerSpec spec = layers.get(i);
-            File file = layerFiles.get(i);
+            File f = layerFiles.get(i);
 
-            Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
-            if (bmp == null) throw new DecodeError("decode failed");
-
-            float alpha = spec.getAlpha();
-            paint.setAlpha((int)(alpha * 255f));
-
-            String blend = spec.getBlendMode();
-            if ("multiply".equals(blend)) {
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-            } else if ("screen".equals(blend)) {
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
-            } else {
-                paint.setXfermode(null);
+            if (f == null || !f.exists() || f.length() <= 0) {
+                throw new IllegalStateException("layer file missing/empty at index=" + i);
             }
 
-            drawLayer(canvas, paint, bmp, spec);
+            Bitmap bmp = null;
+            try {
+                bmp = BitmapFactory.decodeFile(f.getAbsolutePath());
+                if (bmp == null) throw new IllegalStateException("decode failed at index=" + i);
 
-            bmp.recycle();
+                float alpha = spec.getAlpha();
+                if (alpha < 0f) alpha = 0f;
+                if (alpha > 1f) alpha = 1f;
+                paint.setAlpha((int) (alpha * 255f));
+
+                drawAt(canvas, paint, bmp, spec.getX(), spec.getY(), spec.getScale(), spec.getRotation());
+
+            } finally {
+                paint.setAlpha(255);
+                if (bmp != null && !bmp.isRecycled()) bmp.recycle();
+            }
         }
-
-        paint.setXfermode(null);
-        paint.setAlpha(255);
 
         return out;
     }
 
-    private void drawLayer(Canvas canvas, Paint paint, Bitmap bmp, LayerSpec spec) {
+    private void drawAt(Canvas canvas, Paint paint, Bitmap bmp, float cx, float cy, float scale, float rotationDeg) {
 
-        int bw = bmp.getWidth();
-        int bh = bmp.getHeight();
+        float s = scale;
+        if (s <= 0f) s = 1f;
 
-        float ax = spec.getAnchorX();
-        float ay = spec.getAnchorY();
+        float bw = bmp.getWidth();
+        float bh = bmp.getHeight();
 
-        float anchorPx = bw * ax;
-        float anchorPy = bh * ay;
-
+        // place bitmap center at (cx,cy)
         Matrix m = new Matrix();
-
-        m.postTranslate(-anchorPx, -anchorPy);
-        m.postScale(spec.getScale(), spec.getScale());
-        m.postRotate(spec.getRotation());
-        m.postTranslate(spec.getX(), spec.getY());
+        m.postTranslate(-bw / 2f, -bh / 2f);
+        m.postScale(s, s);
+        if (rotationDeg != 0f) m.postRotate(rotationDeg);
+        m.postTranslate(cx, cy);
 
         canvas.drawBitmap(bmp, m, paint);
     }

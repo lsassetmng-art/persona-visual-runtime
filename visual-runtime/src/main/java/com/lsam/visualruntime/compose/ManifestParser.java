@@ -1,6 +1,5 @@
 package com.lsam.visualruntime.compose;
 
-import com.lsam.visualruntime.error.DecodeError;
 import com.lsam.visualruntime.model.ComposeManifest;
 import com.lsam.visualruntime.model.LayerSpec;
 
@@ -10,116 +9,57 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Expected JSON (Edge canonical):
- * {
- *   "manifest_sha256": "...",   // optional
- *   "width": 512,
- *   "height": 512,
- *   "layers": [
- *     {
- *       "uri": "asset-character/..png",   // or "url"
- *       "z_index": 5,                    // or "zIndex"
- *       "x": 256,
- *       "y": 256,
- *       "scale": 1.0,
- *       "rotation": 0,
- *       "alpha": 1.0,
- *       "blend_mode": "normal",
- *       "anchor_x": 0.5,                 // optional
- *       "anchor_y": 0.5                  // optional
- *     }
- *   ]
- * }
- */
 public class ManifestParser {
 
     public ComposeManifest parse(String layersJson) throws Exception {
-
         if (layersJson == null || layersJson.trim().isEmpty()) {
-            throw new DecodeError("layers_json empty");
+            throw new IllegalArgumentException("layersJson empty");
         }
 
         JSONObject root = new JSONObject(layersJson);
 
-        String sha = optStringAny(root, "manifest_sha256", "manifestSha256", "sha256", "manifest");
-        int width = optIntAny(root, 512, "width", "w");
-        int height = optIntAny(root, 512, "height", "h");
+        String sha = root.optString("manifest_sha256", "");
+        if (sha.isEmpty()) sha = root.optString("manifestSha256", ""); // fallback
+
+        int width = root.optInt("width", 512);
+        int height = root.optInt("height", 512);
 
         JSONArray arr = root.optJSONArray("layers");
-        if (arr == null) throw new DecodeError("layers missing");
-        if (arr.length() <= 0) throw new DecodeError("layers empty");
+        if (arr == null || arr.length() == 0) throw new IllegalArgumentException("manifest layers empty");
 
-        final float cx = width / 2.0f;
-        final float cy = height / 2.0f;
-
-        List<LayerSpec> layers = new ArrayList<>();
+        List<LayerSpec> layers = new ArrayList<>(arr.length());
 
         for (int i = 0; i < arr.length(); i++) {
-            JSONObject o = arr.optJSONObject(i);
-            if (o == null) continue;
+            JSONObject o = arr.getJSONObject(i);
 
-            String uri = optStringAny(o, "uri", "url");
-            if (uri == null || uri.trim().isEmpty()) throw new DecodeError("layer uri empty");
+            String bucket = o.optString("bucket_name", "");
+            String path = o.optString("asset_path", "");
+            if (bucket.isEmpty()) bucket = o.optString("bucket", "");
+            if (path.isEmpty()) path = o.optString("path", "");
+            if (bucket.isEmpty() || path.isEmpty()) {
+                // 旧仕様互換: uri = "bucket/path" みたいなケース（最終仕様では使わないが保険）
+                String uri = o.optString("uri", "");
+                if (!uri.isEmpty() && uri.contains("/")) {
+                    int p = uri.indexOf('/');
+                    bucket = uri.substring(0, p);
+                    path = uri.substring(p + 1);
+                }
+            }
+            if (bucket.isEmpty() || path.isEmpty()) {
+                throw new IllegalArgumentException("layer missing bucket_name/asset_path at index=" + i);
+            }
 
-            int z = optIntAny(o, 0, "z_index", "zIndex", "z");
+            int z = o.optInt("z_index", 0);
+            float x = (float) o.optDouble("x", width / 2.0);
+            float y = (float) o.optDouble("y", height / 2.0);
+            float scale = (float) o.optDouble("scale", 1.0);
+            float rot = (float) o.optDouble("rotation", 0.0);
+            float alpha = (float) o.optDouble("alpha", 1.0);
+            String blend = o.optString("blend_mode", "normal");
 
-            float x = optFloatAny(o, cx, "x");
-            float y = optFloatAny(o, cy, "y");
-
-            float scale = optFloatAny(o, 1.0f, "scale");
-            float rotation = optFloatAny(o, 0.0f, "rotation");
-
-            float alpha = optFloatAny(o, 1.0f, "alpha");
-            String blend = optStringAny(o, "blend_mode", "blendMode");
-            if (blend == null || blend.trim().isEmpty()) blend = "normal";
-
-            float anchorX = optFloatAny(o, 0.5f, "anchor_x", "anchorX");
-            float anchorY = optFloatAny(o, 0.5f, "anchor_y", "anchorY");
-
-            layers.add(new LayerSpec(
-                    uri,
-                    z,
-                    x,
-                    y,
-                    scale,
-                    rotation,
-                    anchorX,
-                    anchorY,
-                    alpha,
-                    blend
-            ));
+            layers.add(new LayerSpec(bucket, path, z, x, y, scale, rot, alpha, blend));
         }
 
         return new ComposeManifest(sha, width, height, layers);
-    }
-
-    private static String optStringAny(JSONObject o, String... keys) {
-        for (String k : keys) {
-            if (o.has(k)) {
-                String v = o.optString(k, null);
-                if (v != null) return v;
-            }
-        }
-        return null;
-    }
-
-    private static int optIntAny(JSONObject o, int def, String... keys) {
-        for (String k : keys) {
-            if (o.has(k)) {
-                try { return o.getInt(k); } catch (Exception ignored) {}
-                try { return (int) Math.round(o.getDouble(k)); } catch (Exception ignored) {}
-            }
-        }
-        return def;
-    }
-
-    private static float optFloatAny(JSONObject o, float def, String... keys) {
-        for (String k : keys) {
-            if (o.has(k)) {
-                try { return (float) o.getDouble(k); } catch (Exception ignored) {}
-            }
-        }
-        return def;
     }
 }
