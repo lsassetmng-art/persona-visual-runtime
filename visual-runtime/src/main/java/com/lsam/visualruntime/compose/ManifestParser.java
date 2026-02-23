@@ -1,8 +1,8 @@
 package com.lsam.visualruntime.compose;
 
+import com.lsam.visualruntime.error.DecodeError;
 import com.lsam.visualruntime.model.ComposeManifest;
 import com.lsam.visualruntime.model.LayerSpec;
-import com.lsam.visualruntime.log.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,76 +10,116 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Expected JSON (Edge canonical):
+ * {
+ *   "manifest_sha256": "...",   // optional
+ *   "width": 512,
+ *   "height": 512,
+ *   "layers": [
+ *     {
+ *       "uri": "asset-character/..png",   // or "url"
+ *       "z_index": 5,                    // or "zIndex"
+ *       "x": 256,
+ *       "y": 256,
+ *       "scale": 1.0,
+ *       "rotation": 0,
+ *       "alpha": 1.0,
+ *       "blend_mode": "normal",
+ *       "anchor_x": 0.5,                 // optional
+ *       "anchor_y": 0.5                  // optional
+ *     }
+ *   ]
+ * }
+ */
 public class ManifestParser {
-
-    private static final int MAX_LAYERS = 20;
-    private static final int MAX_WIDTH = 4096;
-    private static final int MAX_HEIGHT = 4096;
 
     public ComposeManifest parse(String layersJson) throws Exception {
 
         if (layersJson == null || layersJson.trim().isEmpty()) {
-            throw new IllegalArgumentException("layersJson is empty");
+            throw new DecodeError("layers_json empty");
         }
 
         JSONObject root = new JSONObject(layersJson);
 
-        String manifestSha = root.optString("manifest_sha256", null);
-        if (manifestSha == null) {
-            throw new IllegalArgumentException("manifest_sha256 missing");
-        }
+        String sha = optStringAny(root, "manifest_sha256", "manifestSha256", "sha256", "manifest");
+        int width = optIntAny(root, 512, "width", "w");
+        int height = optIntAny(root, 512, "height", "h");
 
-        int width = root.optInt("width", 1080);
-        int height = root.optInt("height", 1920);
+        JSONArray arr = root.optJSONArray("layers");
+        if (arr == null) throw new DecodeError("layers missing");
+        if (arr.length() <= 0) throw new DecodeError("layers empty");
 
-        if (width <= 0 || width > MAX_WIDTH) {
-            throw new IllegalArgumentException("width out of range");
-        }
-        if (height <= 0 || height > MAX_HEIGHT) {
-            throw new IllegalArgumentException("height out of range");
-        }
-
-        JSONArray layersArray = root.optJSONArray("layers");
-        if (layersArray == null || layersArray.length() == 0) {
-            throw new IllegalArgumentException("layers missing or empty");
-        }
-        if (layersArray.length() > MAX_LAYERS) {
-            throw new IllegalArgumentException("too many layers");
-        }
+        final float cx = width / 2.0f;
+        final float cy = height / 2.0f;
 
         List<LayerSpec> layers = new ArrayList<>();
 
-        for (int i = 0; i < layersArray.length(); i++) {
-            JSONObject obj = layersArray.getJSONObject(i);
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.optJSONObject(i);
+            if (o == null) continue;
 
-            String url = obj.optString("url", null);
-            if (url == null || url.isEmpty()) {
-                throw new IllegalArgumentException("layer url missing");
-            }
-            validateUrl(url);
+            String uri = optStringAny(o, "uri", "url");
+            if (uri == null || uri.trim().isEmpty()) throw new DecodeError("layer uri empty");
 
-            int zIndex = obj.optInt("z_index", 0);
-            float alpha = (float) obj.optDouble("alpha", 1.0);
-            String blend = obj.optString("blend_mode", "normal");
-            String scaleMode = obj.optString("scale_mode", LayerSpec.SCALE_FIT_CENTER);
+            int z = optIntAny(o, 0, "z_index", "zIndex", "z");
 
-            if (alpha < 0f || alpha > 1f) {
-                throw new IllegalArgumentException("alpha out of range");
-            }
+            float x = optFloatAny(o, cx, "x");
+            float y = optFloatAny(o, cy, "y");
 
-            layers.add(new LayerSpec(url, zIndex, alpha, blend, scaleMode));
+            float scale = optFloatAny(o, 1.0f, "scale");
+            float rotation = optFloatAny(o, 0.0f, "rotation");
+
+            float alpha = optFloatAny(o, 1.0f, "alpha");
+            String blend = optStringAny(o, "blend_mode", "blendMode");
+            if (blend == null || blend.trim().isEmpty()) blend = "normal";
+
+            float anchorX = optFloatAny(o, 0.5f, "anchor_x", "anchorX");
+            float anchorY = optFloatAny(o, 0.5f, "anchor_y", "anchorY");
+
+            layers.add(new LayerSpec(
+                    uri,
+                    z,
+                    x,
+                    y,
+                    scale,
+                    rotation,
+                    anchorX,
+                    anchorY,
+                    alpha,
+                    blend
+            ));
         }
 
-        Logger.d("Manifest parsed: layers=" + layers.size());
-        return new ComposeManifest(manifestSha, width, height, layers);
+        return new ComposeManifest(sha, width, height, layers);
     }
 
-    private void validateUrl(String url) {
-        if (!(url.startsWith("https://") || url.startsWith("http://"))) {
-            throw new IllegalArgumentException("invalid url scheme");
+    private static String optStringAny(JSONObject o, String... keys) {
+        for (String k : keys) {
+            if (o.has(k)) {
+                String v = o.optString(k, null);
+                if (v != null) return v;
+            }
         }
-        if (url.startsWith("file://") || url.startsWith("content://") || url.startsWith("data:") || url.startsWith("javascript:")) {
-            throw new IllegalArgumentException("forbidden url scheme");
+        return null;
+    }
+
+    private static int optIntAny(JSONObject o, int def, String... keys) {
+        for (String k : keys) {
+            if (o.has(k)) {
+                try { return o.getInt(k); } catch (Exception ignored) {}
+                try { return (int) Math.round(o.getDouble(k)); } catch (Exception ignored) {}
+            }
         }
+        return def;
+    }
+
+    private static float optFloatAny(JSONObject o, float def, String... keys) {
+        for (String k : keys) {
+            if (o.has(k)) {
+                try { return (float) o.getDouble(k); } catch (Exception ignored) {}
+            }
+        }
+        return def;
     }
 }

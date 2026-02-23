@@ -2,45 +2,63 @@ package com.lsam.visualruntime.model;
 
 public class LayerSpec {
 
-    public static final String SCALE_FIT_CENTER = "fit_center";
-    public static final String SCALE_CENTER_CROP = "center_crop";
-
     private final String url;
     private final int zIndex;
+
+    private final float x;
+    private final float y;
+
+    private final float scale;
+    private final float rotation;
+
+    private final float anchorX;
+    private final float anchorY;
+
     private final float alpha;
     private final String blendMode;
-    private final String scaleMode;
 
-    // 旧互換コンストラクタ（既存コードを壊さない）
-    public LayerSpec(String url, int zIndex, float alpha, String blendMode) {
-        this(url, zIndex, alpha, blendMode, SCALE_FIT_CENTER);
-    }
-
-    public LayerSpec(String url, int zIndex, float alpha, String blendMode, String scaleMode) {
+    public LayerSpec(
+            String url,
+            int zIndex,
+            float x,
+            float y,
+            float scale,
+            float rotation,
+            float anchorX,
+            float anchorY,
+            float alpha,
+            String blendMode
+    ) {
         this.url = url;
         this.zIndex = zIndex;
-        this.alpha = alpha;
-        this.blendMode = blendMode;
-        this.scaleMode = (scaleMode == null || scaleMode.isEmpty()) ? SCALE_FIT_CENTER : scaleMode;
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
+        this.rotation = rotation;
+        this.anchorX = clamp01(anchorX);
+        this.anchorY = clamp01(anchorY);
+        this.alpha = clamp01(alpha);
+        this.blendMode = (blendMode == null) ? "normal" : blendMode.toLowerCase();
     }
 
-    public String getUrl() {
-        return url;
-    }
+    public String getUrl() { return url; }
+    public int getZIndex() { return zIndex; }
 
-    public int getZIndex() {
-        return zIndex;
-    }
+    public float getX() { return x; }
+    public float getY() { return y; }
 
-    public float getAlpha() {
-        return alpha;
-    }
+    public float getScale() { return scale; }
+    public float getRotation() { return rotation; }
 
-    public String getBlendMode() {
-        return blendMode;
-    }
+    public float getAnchorX() { return anchorX; }
+    public float getAnchorY() { return anchorY; }
 
-    public String getScaleMode() {
-        return scaleMode;
+    public float getAlpha() { return alpha; }
+    public String getBlendMode() { return blendMode; }
+
+    private static float clamp01(float v) {
+        if (v < 0f) return 0f;
+        if (v > 1f) return 1f;
+        return v;
     }
 }

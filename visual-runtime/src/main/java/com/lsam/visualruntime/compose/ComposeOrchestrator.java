@@ -98,7 +98,7 @@ public class ComposeOrchestrator {
                 }
 
                 android.graphics.Bitmap bmp = composer.composeToBitmap(
-                        new ComposeManifest(manifest.getManifestSha256(), w, h, layers),
+                        manifest,
                         layerFiles
                 );
 
