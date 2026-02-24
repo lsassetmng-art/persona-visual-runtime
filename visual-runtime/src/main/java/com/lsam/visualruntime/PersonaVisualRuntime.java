@@ -40,3 +40,36 @@ public class PersonaVisualRuntime {
         });
     }
 }
+
+    // ===== Phase C Async追加 =====
+    private final com.lsam.visualruntime.util.RuntimeExecutor __executor =
+            new com.lsam.visualruntime.util.RuntimeExecutor(2);
+
+    public void composeAsync(
+            final String personaId,
+            final String manifestSha,
+            final int width,
+            final int height,
+            final com.lsam.visualruntime.util.Callback<java.io.File> cb
+    ) {
+        __executor.execute(() -> {
+            try {
+                java.io.File f = composeSync(personaId, manifestSha, width, height);
+                cb.onSuccess(f);
+            } catch (Throwable t) {
+                cb.onError(t);
+            }
+        });
+    }
+
+    // ===== Phase D FrameLoop開始 =====
+    public com.lsam.visualruntime.anim.FrameLoop startFrameLoop(
+            int fps,
+            com.lsam.visualruntime.anim.AudioAmplitudeProvider amp,
+            com.lsam.visualruntime.anim.FrameLoop.Listener listener
+    ) {
+        com.lsam.visualruntime.anim.FrameLoop loop =
+                new com.lsam.visualruntime.anim.FrameLoop(fps, listener, amp);
+        loop.start();
+        return loop;
+    }
