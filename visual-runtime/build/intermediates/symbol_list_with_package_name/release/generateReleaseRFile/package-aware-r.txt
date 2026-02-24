@@ -1,2 +1,0 @@
-com.lsam.visualruntime
-drawable persona_fallback

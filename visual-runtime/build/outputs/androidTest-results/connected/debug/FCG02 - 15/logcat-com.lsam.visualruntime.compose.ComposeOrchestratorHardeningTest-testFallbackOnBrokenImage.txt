@@ -1,2 +1,0 @@
-02-22 07:40:55.790  9502  9516 I TestRunner: started: testFallbackOnBrokenImage(com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest)
-02-22 07:40:55.795  9502  9516 I TestRunner: finished: testFallbackOnBrokenImage(com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest)

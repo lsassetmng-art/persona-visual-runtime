@@ -1,2 +1,0 @@
-02-22 07:40:55.800  9502  9516 I TestRunner: started: testComposeSingleLayer(com.lsam.visualruntime.render.BitmapComposerTest)
-02-22 07:40:55.803  9502  9516 I TestRunner: finished: testComposeSingleLayer(com.lsam.visualruntime.render.BitmapComposerTest)

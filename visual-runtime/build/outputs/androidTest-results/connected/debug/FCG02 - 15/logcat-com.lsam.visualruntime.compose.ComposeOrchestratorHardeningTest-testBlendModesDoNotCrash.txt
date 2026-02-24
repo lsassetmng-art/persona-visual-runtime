@@ -1,2 +1,0 @@
-02-22 07:40:55.780  9502  9516 I TestRunner: started: testBlendModesDoNotCrash(com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest)
-02-22 07:40:55.788  9502  9516 I TestRunner: finished: testBlendModesDoNotCrash(com.lsam.visualruntime.compose.ComposeOrchestratorHardeningTest)

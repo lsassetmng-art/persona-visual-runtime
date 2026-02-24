@@ -2,21 +2,20 @@ package com.lsam.visualruntime.anim;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
 import com.lsam.visualruntime.compose.ComposeOrchestrator;
-import com.lsam.visualruntime.model.ComposeManifest;
 import com.lsam.visualruntime.model.ParametricState;
-import com.lsam.visualruntime.render.BitmapComposer;
 import com.lsam.visualruntime.render.LayerTransformProvider;
 import com.lsam.visualruntime.rig.RigSolver;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class RigFrameRenderEngine {
 
@@ -55,36 +54,45 @@ public final class RigFrameRenderEngine {
 
             try {
 
-                // ===== ParametricState自動更新 =====
+                // ===== ParametricState更新 =====
                 ParametricState state = new ParametricState();
-
-                state.mouthOpen = (float)Math.abs(Math.sin(nowMs / 120.0));
+                state.mouthOpen = (float) Math.abs(Math.sin(nowMs / 120.0));
                 state.eyeBlink = (nowMs % 3000L < 120) ? 1f : 0f;
-                state.headTilt = (float)Math.sin(nowMs / 1000.0);
-                state.bodyShift = (float)Math.sin(nowMs / 1500.0);
+                state.headTilt = (float) Math.sin(nowMs / 1000.0);
+                state.bodyShift = (float) Math.sin(nowMs / 1500.0);
 
                 // ===== Rig解決 =====
                 RigSolver solver = new RigSolver();
                 LayerTransformProvider rigProvider = solver.solve(state);
 
-                // ===== 既存Compose =====
+                // ===== 通常Compose =====
                 ComposeOrchestrator orch = new ComposeOrchestrator();
                 ComposeOrchestrator.Result r =
                         orch.composeBlocking(appContext, personaId, layersJson);
 
-                ComposeManifest manifest = r.manifest;
-                List<File> files = r.layerFiles;
+                File file = r.outputFile;
 
-                BitmapComposer composer = new BitmapComposer();
+                Bitmap base = BitmapFactory.decodeFile(file.getAbsolutePath());
+                if (base == null) throw new IllegalStateException("decode failed");
 
-                Bitmap bmp =
-                        composer.composeToBitmapWithRig(
-                                manifest,
-                                files,
-                                rigProvider
-                        );
+                // ===== Rig変形（簡易版：回転のみ例示）=====
+                Bitmap out = Bitmap.createBitmap(
+                        base.getWidth(),
+                        base.getHeight(),
+                        Bitmap.Config.ARGB_8888
+                );
 
-                mainHandler.post(() -> listener.onBitmap(frameIndex, bmp));
+                Canvas canvas = new Canvas(out);
+                Matrix m = new Matrix();
+
+                float tilt = state.headTilt * 10f; // 最大10度
+                m.postRotate(tilt, base.getWidth() / 2f, base.getHeight() / 2f);
+
+                canvas.drawBitmap(base, m, null);
+
+                base.recycle();
+
+                mainHandler.post(() -> listener.onBitmap(frameIndex, out));
 
             } catch (Throwable t) {
                 mainHandler.post(() -> listener.onError(t));
