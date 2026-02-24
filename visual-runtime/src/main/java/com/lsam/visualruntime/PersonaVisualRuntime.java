@@ -171,3 +171,23 @@ public class PersonaVisualRuntime {
             }
         };
     }
+
+    // ===== Lv5.5 IR Compose =====
+    public android.graphics.Bitmap composeIrSync(
+            com.lsam.visualruntime.model.ComposeManifest manifest,
+            java.util.Map<String, java.io.File> layerFiles,
+            java.util.List<com.lsam.visualruntime.render.RenderInstruction> instructions,
+            int width,
+            int height
+    ) {
+        com.lsam.visualruntime.engine.IrComposeEngine engine =
+                new com.lsam.visualruntime.engine.IrComposeEngine();
+
+        return engine.compose(
+                manifest,
+                layerFiles,
+                instructions,
+                width,
+                height
+        );
+    }
