@@ -1,0 +1,10 @@
+com.lsam.visualruntime.visual-runtime-lifecycle-runtime-2.3.1-0 C:\Users\user\.gradle\caches\8.10.2\transforms\013fe4c313ecec26f7bcd9b36271fdc8\transformed\lifecycle-runtime-2.3.1\res
+com.lsam.visualruntime.visual-runtime-annotation-experimental-1.3.0-1 C:\Users\user\.gradle\caches\8.10.2\transforms\1e370908bb7bdc25f8655c675672f9c7\transformed\annotation-experimental-1.3.0\res
+com.lsam.visualruntime.visual-runtime-core-1.12.0-2 C:\Users\user\.gradle\caches\8.10.2\transforms\a3281b83210370e63f90a1e8a19fe8c2\transformed\core-1.12.0\res
+com.lsam.visualruntime.visual-runtime-pngs-3 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\generated\res\pngs\release
+com.lsam.visualruntime.visual-runtime-resValues-4 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\generated\res\resValues\release
+com.lsam.visualruntime.visual-runtime-mergeReleaseResources-5 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.lsam.visualruntime.visual-runtime-mergeReleaseResources-6 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.lsam.visualruntime.visual-runtime-release-7 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\build\intermediates\merged_res\release\mergeReleaseResources
+com.lsam.visualruntime.visual-runtime-main-8 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\src\main\res
+com.lsam.visualruntime.visual-runtime-release-9 C:\Users\user\AndroidStudioProjects\persona-visual-runtime\visual-runtime\src\release\res

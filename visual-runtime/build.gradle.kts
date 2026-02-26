@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
+    id("com.android.library")
 }
 
 android {
@@ -20,17 +20,15 @@ android {
 }
 
 dependencies {
-    implementation(libs.okhttp)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.core)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.annotation:annotation:1.7.1")
+    implementation("androidx.core:core:1.12.0")
 
-    testImplementation(libs.junit4)
+    testImplementation("junit:junit:4.13.2")
 
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    androidTestImplementation(libs.okhttp)
-    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.register("ciCheck") {

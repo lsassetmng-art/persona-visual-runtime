@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "persona-visual-runtime"
+
 include(":visual-runtime")

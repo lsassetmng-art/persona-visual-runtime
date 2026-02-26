@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.8.0" type="incidents">
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.library than 8.9.1 is available: 9.0.1. (There is also a newer version of 8.9.𝑥 available, if upgrading to 9.0.1 is difficult: 8.9.3)">
+        <fix-alternatives>
+            <fix-replace
+                description="Change to 9.0.1"
+                family="Update versions"
+                oldString="8.9.1"
+                replacement="9.0.1"
+                priority="0"/>
+            <fix-replace
+                description="Change to 8.9.3"
+                family="Update versions"
+                robot="true"
+                independent="true"
+                oldString="8.9.1"
+                replacement="8.9.3"
+                priority="0"/>
+        </fix-alternatives>
+        <location
+            file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+            line="2"
+            column="7"
+            startOffset="17"
+            endLine="2"
+            endColumn="14"
+            endOffset="24"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.annotation:annotation than 1.7.1 is available: 1.9.1">
+        <fix-replace
+            description="Change to 1.9.1"
+            family="Update versions"
+            oldString="1.7.1"
+            replacement="1.9.1"
+            priority="0"/>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="24"
+            column="20"
+            startOffset="542"
+            endLine="24"
+            endColumn="58"
+            endOffset="580"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core than 1.12.0 is available: 1.17.0">
+        <fix-replace
+            description="Change to 1.17.0"
+            family="Update versions"
+            oldString="1.12.0"
+            replacement="1.17.0"
+            priority="0"/>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="25"
+            column="20"
+            startOffset="601"
+            endLine="25"
+            endColumn="47"
+            endOffset="628"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="29"
+            column="31"
+            startOffset="707"
+            endLine="29"
+            endColumn="62"
+            endOffset="738"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="30"
+            column="31"
+            startOffset="770"
+            endLine="30"
+            endColumn="75"
+            endOffset="814"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core than 1.16.0 is available: 1.17.0">
+        <fix-replace
+            description="Change to 1.17.0"
+            family="Update versions"
+            oldString="1.16.0"
+            replacement="1.17.0"
+            priority="0"/>
+        <location
+            file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+            line="4"
+            column="16"
+            startOffset="69"
+            endLine="4"
+            endColumn="24"
+            endOffset="77"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+            line="6"
+            column="24"
+            startOffset="119"
+            endLine="6"
+            endColumn="31"
+            endOffset="126"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+            line="7"
+            column="12"
+            startOffset="138"
+            endLine="7"
+            endColumn="19"
+            endOffset="145"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use the existing version catalog reference (`libs.okhttp`) instead">
+        <fix-replace
+            description="Replace with existing version catalog reference `okhttp`"
+            robot="true"
+            independent="true"
+            replacement="libs.okhttp"
+            priority="0">
+            <range
+                file="${:visual-runtime*projectDir}/build.gradle.kts"
+                startOffset="485"
+                endOffset="521"/>
+        </fix-replace>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="23"
+            column="20"
+            startOffset="485"
+            endLine="23"
+            endColumn="56"
+            endOffset="521"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use version catalog instead (androidx.annotation:annotation is already available as `androidx-annotation`, but using version 1.9.1 instead)">
+        <fix-alternatives>
+            <fix-composite
+                description="Replace with new library catalog declaration for androidx-annotation-annotation-v171-x6"
+                robot="true"
+                independent="true">
+                <fix-replace
+                    description="Replace with androidxAnnotationAnnotation5 = &quot;1.7.1&quot;..."
+                    robot="true"
+                    independent="true"
+                    oldString="_lint_insert_begin_"
+                    replacement="androidxAnnotationAnnotation5 = &quot;1.7.1&quot;&#xA;"
+                    priority="0">
+                    <range
+                        file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+                        startOffset="54"
+                        endOffset="54"/>
+                </fix-replace>
+                <fix-replace
+                    description="Replace with androidx-annotation-annotation-v171-x6 = { module = &quot;androidx.annotation:annotation&quot;, version.ref = &quot;androidxAnnotationAnnotation5&quot; }..."
+                    robot="true"
+                    independent="true"
+                    oldString="_lint_insert_begin_"
+                    replacement="androidx-annotation-annotation-v171-x6 = { module = &quot;androidx.annotation:annotation&quot;, version.ref = &quot;androidxAnnotationAnnotation5&quot; }&#xA;"
+                    priority="0">
+                    <range
+                        file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+                        startOffset="362"
+                        endOffset="362"/>
+                </fix-replace>
+                <fix-replace
+                    description="Replace with libs.androidx.annotation.annotation.v171.x6"
+                    robot="true"
+                    independent="true"
+                    replacement="libs.androidx.annotation.annotation.v171.x6"
+                    priority="0">
+                    <range
+                        file="${:visual-runtime*projectDir}/build.gradle.kts"
+                        startOffset="542"
+                        endOffset="580"/>
+                </fix-replace>
+            </fix-composite>
+            <fix-replace
+                description="Replace with existing version catalog reference `androidx-annotation` (version 1.9.1)"
+                replacement="libs.androidx.annotation"
+                priority="0">
+                <range
+                    file="${:visual-runtime*projectDir}/build.gradle.kts"
+                    startOffset="542"
+                    endOffset="580"/>
+            </fix-replace>
+        </fix-alternatives>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="24"
+            column="20"
+            startOffset="542"
+            endLine="24"
+            endColumn="58"
+            endOffset="580"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use version catalog instead (androidx.core:core is already available as `androidx-core`, but using version 1.16.0 instead)">
+        <fix-alternatives>
+            <fix-composite
+                description="Replace with new library catalog declaration for androidx-core-core-v1120-x6"
+                robot="true"
+                independent="true">
+                <fix-replace
+                    description="Replace with androidxCoreCore5 = &quot;1.12.0&quot;..."
+                    robot="true"
+                    independent="true"
+                    oldString="_lint_insert_begin_"
+                    replacement="androidxCoreCore5 = &quot;1.12.0&quot;&#xA;"
+                    priority="0">
+                    <range
+                        file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+                        startOffset="78"
+                        endOffset="78"/>
+                </fix-replace>
+                <fix-replace
+                    description="Replace with androidx-core-core-v1120-x6 = { module = &quot;androidx.core:core&quot;, version.ref = &quot;androidxCoreCore5&quot; }..."
+                    robot="true"
+                    independent="true"
+                    oldString="_lint_insert_begin_"
+                    replacement="androidx-core-core-v1120-x6 = { module = &quot;androidx.core:core&quot;, version.ref = &quot;androidxCoreCore5&quot; }&#xA;"
+                    priority="0">
+                    <range
+                        file="$HOME/AndroidStudioProjects/persona-visual-runtime/gradle/libs.versions.toml"
+                        startOffset="443"
+                        endOffset="443"/>
+                </fix-replace>
+                <fix-replace
+                    description="Replace with libs.androidx.core.core.v1120.x6"
+                    robot="true"
+                    independent="true"
+                    replacement="libs.androidx.core.core.v1120.x6"
+                    priority="0">
+                    <range
+                        file="${:visual-runtime*projectDir}/build.gradle.kts"
+                        startOffset="601"
+                        endOffset="628"/>
+                </fix-replace>
+            </fix-composite>
+            <fix-replace
+                description="Replace with existing version catalog reference `androidx-core` (version 1.16.0)"
+                replacement="libs.androidx.core"
+                priority="0">
+                <range
+                    file="${:visual-runtime*projectDir}/build.gradle.kts"
+                    startOffset="601"
+                    endOffset="628"/>
+            </fix-replace>
+        </fix-alternatives>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="25"
+            column="20"
+            startOffset="601"
+            endLine="25"
+            endColumn="47"
+            endOffset="628"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use the existing version catalog reference (`libs.junit4`) instead">
+        <fix-replace
+            description="Replace with existing version catalog reference `junit4`"
+            robot="true"
+            independent="true"
+            replacement="libs.junit4"
+            priority="0">
+            <range
+                file="${:visual-runtime*projectDir}/build.gradle.kts"
+                startOffset="654"
+                endOffset="674"/>
+        </fix-replace>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="27"
+            column="24"
+            startOffset="654"
+            endLine="27"
+            endColumn="44"
+            endOffset="674"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use the existing version catalog reference (`libs.androidx.test.ext.junit`) instead">
+        <fix-replace
+            description="Replace with existing version catalog reference `androidx-test-ext-junit`"
+            robot="true"
+            independent="true"
+            replacement="libs.androidx.test.ext.junit"
+            priority="0">
+            <range
+                file="${:visual-runtime*projectDir}/build.gradle.kts"
+                startOffset="707"
+                endOffset="738"/>
+        </fix-replace>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="29"
+            column="31"
+            startOffset="707"
+            endLine="29"
+            endColumn="62"
+            endOffset="738"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use the existing version catalog reference (`libs.espresso.core`) instead">
+        <fix-replace
+            description="Replace with existing version catalog reference `espresso-core`"
+            robot="true"
+            independent="true"
+            replacement="libs.espresso.core"
+            priority="0">
+            <range
+                file="${:visual-runtime*projectDir}/build.gradle.kts"
+                startOffset="770"
+                endOffset="814"/>
+        </fix-replace>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="30"
+            column="31"
+            startOffset="770"
+            endLine="30"
+            endColumn="75"
+            endOffset="814"/>
+    </incident>
+
+    <incident
+        id="UseTomlInstead"
+        severity="warning"
+        message="Use the existing version catalog reference (`libs.mockwebserver`) instead">
+        <fix-replace
+            description="Replace with existing version catalog reference `mockwebserver`"
+            robot="true"
+            independent="true"
+            replacement="libs.mockwebserver"
+            priority="0">
+            <range
+                file="${:visual-runtime*projectDir}/build.gradle.kts"
+                startOffset="846"
+                endOffset="889"/>
+        </fix-replace>
+        <location
+            file="${:visual-runtime*projectDir}/build.gradle.kts"
+            line="31"
+            column="31"
+            startOffset="846"
+            endLine="31"
+            endColumn="74"
+            endOffset="889"/>
+    </incident>
+
+</incidents>
